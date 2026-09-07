@@ -110,29 +110,26 @@ python3 scripts/scrape.py --out out.json
 
 No dependencies beyond the Python 3 standard library.
 
-## How the weekly update actually runs
+## Why this doesn't run on a `schedule:` trigger
 
-**Not GitHub Actions.** `www.synergy.net.au` sits behind Azure Front Door, and
-its WAF returns a flat `403 Forbidden` to requests from GitHub-hosted runner
-IPs specifically — confirmed by sending the exact same request (same URL,
-same User-Agent) from an ordinary home internet connection, where it succeeds
-every time. This isn't a User-Agent or TLS-fingerprint thing (plain
-`urllib.request` works fine from a residential IP); it's the datacenter/
-hosting ASN being blocked.
+`www.synergy.net.au` sits behind Azure Front Door, and its WAF returns a flat
+`403 Forbidden` to requests from GitHub-hosted runner IPs specifically —
+confirmed by sending the exact same request (same URL, same User-Agent) from
+a non-datacenter IP, where it succeeds every time. This isn't a User-Agent or
+TLS-fingerprint thing (plain `urllib.request` works fine off a normal
+connection); it's the datacenter/hosting ASN being blocked.
 
-So `.github/workflows/update.yml` only has a `workflow_dispatch` trigger (for
-convenience, if you ever run it from a self-hosted runner) — no `schedule:`.
-The actual weekly scrape runs via `deploy/run.sh` on an ordinary machine on an
-ordinary residential connection, invoked by:
+So `.github/workflows/update.yml` only has a `workflow_dispatch` trigger, kept
+for convenience if you run it from a self-hosted runner — no `schedule:`.
+To keep `data/plans.json` current yourself, run `deploy/run.sh` on a
+recurring schedule from any host that isn't on a flagged datacenter IP range:
 
 - **cron** (Linux) or **launchd** (macOS — see
-  `deploy/com.m-rk.synergy-rates.plist.example`), running weekly and pushing
-  straight to `main` when the scrape changed.
-
-If you fork this and want your own scheduled copy, either run `deploy/run.sh`
-from your own always-on machine the same way, or point a **self-hosted**
-GitHub Actions runner (on a non-datacenter IP) at this repo and re-add a
-`schedule:` trigger.
+  `deploy/com.m-rk.synergy-rates.plist.example`) invoking `deploy/run.sh`
+  weekly; it scrapes, and only commits + pushes when something actually
+  changed.
+- Or a **self-hosted** GitHub Actions runner on a non-datacenter IP, with a
+  `schedule:` trigger added back to the workflow.
 
 ## Caveats
 
