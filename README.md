@@ -1,15 +1,16 @@
 # synergy-rates
 
-Structured, machine-readable pricing for [Synergy](https://www.synergy.net.au)'s
-residential electricity plans (Western Australia / SWIS), scraped daily from
-Synergy's own published plan pages and committed to this repo.
+An unofficial JSON API for [Synergy](https://www.synergy.net.au)'s residential
+electricity plan pricing (Western Australia / SWIS) — Synergy publishes no API
+of their own, so this scrapes their public plan pages daily and serves the
+result as versioned, CORS-enabled JSON.
 
 **[Browse the current rates →](https://m-rk.github.io/synergy-rates/)**
 
-**Unofficial.** Not affiliated with or endorsed by Synergy. Synergy publishes no
-API for this data; this repo scrapes the plain HTML of their public plan pages
-(no login, no account access, no usage data — just the same numbers a browser
-sees at synergy.net.au) and re-publishes it as JSON.
+**Unofficial.** Not affiliated with or endorsed by Synergy. No login, no
+account access, no usage data involved — just the same numbers a browser sees
+at synergy.net.au, scraped from the plain HTML of their public plan pages and
+re-published as JSON.
 
 ## Why
 
