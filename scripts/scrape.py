@@ -13,6 +13,8 @@ neither and are skipped.
 
 Usage: scripts/scrape.py [--out data/plans.json]
 """
+from __future__ import annotations
+
 import argparse
 import html
 import json
