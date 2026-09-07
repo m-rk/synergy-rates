@@ -1,9 +1,14 @@
 name: Update rates
 
+# NOTE: this has no `schedule:` trigger. GitHub-hosted runners (ubuntu-latest)
+# get a hard 403 from synergy.net.au -- it sits behind Azure Front Door, and
+# its WAF blocks the datacenter/hosting IP ranges GitHub Actions runs on
+# (confirmed: identical request, identical User-Agent, succeeds from an
+# ordinary home connection and fails only from the runner). The actual
+# weekly scrape runs from a home machine via a plain cron/launchd job --
+# see deploy/. This workflow is kept for `workflow_dispatch` convenience
+# only, and will likely also 403 unless run from a self-hosted runner.
 on:
-  schedule:
-    # Weekly is plenty -- Synergy revises these plans roughly annually.
-    - cron: "17 3 * * 1"
   workflow_dispatch: {}
 
 permissions:

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS launchd job: runs deploy/run.sh weekly (Monday 9am local time).
+  Adjust the two absolute paths below for your machine, then:
+
+    cp deploy/com.m-rk.synergy-rates.plist.example \
+       ~/Library/LaunchAgents/com.m-rk.synergy-rates.plist
+    launchctl load ~/Library/LaunchAgents/com.m-rk.synergy-rates.plist
+
+  To run it once immediately (e.g. to test):
+    launchctl start com.m-rk.synergy-rates
+
+  Logs land at ~/Library/Logs/synergy-rates.log. To remove:
+    launchctl unload ~/Library/LaunchAgents/com.m-rk.synergy-rates.plist
+    rm ~/Library/LaunchAgents/com.m-rk.synergy-rates.plist
+
+  On Linux, a systemd timer or plain crontab entry running the same
+  deploy/run.sh works just as well -- this plist is only needed on macOS.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.m-rk.synergy-rates</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/absolute/path/to/synergy-rates/deploy/run.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>9</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/absolute/path/to/home/Library/Logs/synergy-rates.log</string>
+  <key>StandardErrorPath</key>
+  <string>/absolute/path/to/home/Library/Logs/synergy-rates.log</string>
+</dict>
+</plist>

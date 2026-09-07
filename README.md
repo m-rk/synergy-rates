@@ -101,10 +101,6 @@ Notes:
    block that precedes the table on time-of-use plans, and links each charge
    to a period by name.
 
-`.github/workflows/update.yml` runs this weekly (`workflow_dispatch` also
-available for an on-demand run), and only commits `data/plans.json` when the
-scraped content actually changed.
-
 ## Running it yourself
 
 ```
@@ -113,6 +109,30 @@ python3 scripts/scrape.py --out out.json
 ```
 
 No dependencies beyond the Python 3 standard library.
+
+## How the weekly update actually runs
+
+**Not GitHub Actions.** `www.synergy.net.au` sits behind Azure Front Door, and
+its WAF returns a flat `403 Forbidden` to requests from GitHub-hosted runner
+IPs specifically — confirmed by sending the exact same request (same URL,
+same User-Agent) from an ordinary home internet connection, where it succeeds
+every time. This isn't a User-Agent or TLS-fingerprint thing (plain
+`urllib.request` works fine from a residential IP); it's the datacenter/
+hosting ASN being blocked.
+
+So `.github/workflows/update.yml` only has a `workflow_dispatch` trigger (for
+convenience, if you ever run it from a self-hosted runner) — no `schedule:`.
+The actual weekly scrape runs via `deploy/run.sh` on an ordinary machine on an
+ordinary residential connection, invoked by:
+
+- **cron** (Linux) or **launchd** (macOS — see
+  `deploy/com.m-rk.synergy-rates.plist.example`), running weekly and pushing
+  straight to `main` when the scrape changed.
+
+If you fork this and want your own scheduled copy, either run `deploy/run.sh`
+from your own always-on machine the same way, or point a **self-hosted**
+GitHub Actions runner (on a non-datacenter IP) at this repo and re-add a
+`schedule:` trigger.
 
 ## Caveats
 
