@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  macOS launchd job: runs deploy/run.sh weekly (Monday 9am local time).
+  macOS launchd job: runs deploy/run.sh daily (9am local time).
   Adjust the two absolute paths below for your machine, then:
 
     cp deploy/com.m-rk.synergy-rates.plist.example \
@@ -29,8 +29,6 @@
   </array>
   <key>StartCalendarInterval</key>
   <dict>
-    <key>Weekday</key>
-    <integer>1</integer>
     <key>Hour</key>
     <integer>9</integer>
     <key>Minute</key>

@@ -126,10 +126,44 @@ recurring schedule from any host that isn't on a flagged datacenter IP range:
 
 - **cron** (Linux) or **launchd** (macOS — see
   `deploy/com.m-rk.synergy-rates.plist.example`) invoking `deploy/run.sh`
-  weekly; it scrapes, and only commits + pushes when something actually
+  daily; it scrapes, and only commits + pushes when something actually
   changed.
 - Or a **self-hosted** GitHub Actions runner on a non-datacenter IP, with a
   `schedule:` trigger added back to the workflow.
+
+## Doctor
+
+`deploy/doctor.sh` is a read-only health check for a self-hosted deployment —
+run it any time you want to know "is this actually working right now?":
+
+```
+deploy/doctor.sh
+```
+
+It checks: Python is available, `synergy.net.au` is reachable (and identifies
+the specific 403-from-a-blocked-IP failure mode if not), a live scrape
+produces at least one plan, the git remote is reachable, the working tree is
+clean, `deploy/run.sh` is executable, and whether a dead man's switch (below)
+is configured at all. Exits `0` (all good), `1` (warnings only), or `2` (at
+least one hard failure) — safe to wire into your own monitoring.
+
+## Dead man's switch
+
+A **daily** job that only commits when a rate actually changes has a real
+failure mode: rates change rarely, so "nothing has been pushed in 3 weeks"
+looks identical whether that's expected (no rate changes) or the scheduled
+job silently died. Git history alone can't distinguish those.
+
+`deploy/run.sh` supports an optional heartbeat for exactly this: set
+`SYNERGY_RATES_HEARTBEAT_URL` in the environment it runs under, and it pings
+that URL on every successful run (whether or not anything changed) and
+`<url>/fail` if the run fails — the `<url>` / `<url>/fail` split matches
+[healthchecks.io](https://healthchecks.io)'s convention (free tier is enough
+for one daily check), but works with any endpoint that treats a bare `GET` as
+"I'm alive" — including your own. Configure the check's expected period as
+daily with a few hours of grace, and it'll alert you (email/push/whatever you
+configure on that end) if a day goes by with no ping in either direction.
+`deploy/doctor.sh` reports whether this is set up.
 
 ## Caveats
 
