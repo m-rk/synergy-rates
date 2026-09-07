@@ -1,0 +1,53 @@
+{
+  "slug": "midday-saver",
+  "name": "Synergy Midday Saver",
+  "url": "https://www.synergy.net.au/Your-home/Energy-plans/Midday-Saver",
+  "periods": [
+    {
+      "name": "Super Off Peak",
+      "hours": "9am to 3pm"
+    },
+    {
+      "name": "Peak",
+      "hours": "3pm to 9pm"
+    },
+    {
+      "name": "Off Peak",
+      "hours": "9pm to 9am"
+    }
+  ],
+  "charges": [
+    {
+      "item": "Supply charge",
+      "raw": "132.7806 cents per day",
+      "cents": 132.7806,
+      "per": "day",
+      "period": null,
+      "hours": null
+    },
+    {
+      "item": "Everyday Super Off Peak electricity charge",
+      "raw": "8.8520 cents per unit",
+      "cents": 8.852,
+      "per": "kWh",
+      "period": "Super Off Peak",
+      "hours": "9am to 3pm"
+    },
+    {
+      "item": "Peak electricity charge",
+      "raw": "55.3253 cents per unit",
+      "cents": 55.3253,
+      "per": "kWh",
+      "period": "Peak",
+      "hours": "3pm to 9pm"
+    },
+    {
+      "item": "Everyday Off-peak electricity charge",
+      "raw": "24.3431 cents per unit",
+      "cents": 24.3431,
+      "per": "kWh",
+      "period": "Off Peak",
+      "hours": "9pm to 9am"
+    }
+  ]
+}

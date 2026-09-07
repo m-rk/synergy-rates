@@ -1,0 +1,65 @@
+{
+  "slug": "electric-vehicle-add-on",
+  "name": "Electric Vehicle Add On",
+  "url": "https://www.synergy.net.au/Your-home/Energy-plans/Electric-Vehicle-Add-On",
+  "periods": [
+    {
+      "name": "Overnight",
+      "hours": "11pm to 6am"
+    },
+    {
+      "name": "Peak",
+      "hours": "3pm to 9pm"
+    },
+    {
+      "name": "Super Off Peak",
+      "hours": "9am to 3pm"
+    },
+    {
+      "name": "Off Peak",
+      "hours": "6am to 9am / 9pm to 11pm"
+    }
+  ],
+  "charges": [
+    {
+      "item": "Supply charge",
+      "raw": "132.7806 cents per day",
+      "cents": 132.7806,
+      "per": "day",
+      "period": null,
+      "hours": null
+    },
+    {
+      "item": "Standard home electricity charge",
+      "raw": "55.3253 cents per unit",
+      "cents": 55.3253,
+      "per": "kWh",
+      "period": null,
+      "hours": null
+    },
+    {
+      "item": "Super Off Peak electricity charge",
+      "raw": "8.8520 cents per unit",
+      "cents": 8.852,
+      "per": "kWh",
+      "period": "Super Off Peak",
+      "hours": "9am to 3pm"
+    },
+    {
+      "item": "Overnight electricity charge",
+      "raw": "19.9172 cents per unit",
+      "cents": 19.9172,
+      "per": "kWh",
+      "period": "Overnight",
+      "hours": "11pm to 6am"
+    },
+    {
+      "item": "Everyday EV off peak electricity charge",
+      "raw": "24.3431 cents per unit",
+      "cents": 24.3431,
+      "per": "kWh",
+      "period": "Off Peak",
+      "hours": "6am to 9am / 9pm to 11pm"
+    }
+  ]
+}

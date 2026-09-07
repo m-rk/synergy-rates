@@ -1,0 +1,24 @@
+{
+  "slug": "home-plan-a1",
+  "name": "Synergy Home Plan\u00ae (A1) tariff",
+  "url": "https://www.synergy.net.au/Your-home/Energy-plans/Home-Plan-A1",
+  "periods": [],
+  "charges": [
+    {
+      "item": "Supply charge",
+      "raw": "119.2419 cents per day",
+      "cents": 119.2419,
+      "per": "day",
+      "period": null,
+      "hours": null
+    },
+    {
+      "item": "Electricity charge",
+      "raw": "33.2621 cents per unit",
+      "cents": 33.2621,
+      "per": "kWh",
+      "period": null,
+      "hours": null
+    }
+  ]
+}

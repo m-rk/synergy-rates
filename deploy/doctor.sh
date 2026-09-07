@@ -60,10 +60,10 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   else
     fail "no git remote named 'origin'"
   fi
-  if [ -n "$(git status --porcelain -- data/plans.json)" ]; then
-    warn "data/plans.json has uncommitted changes"
+  if [ -n "$(git status --porcelain -- data/)" ]; then
+    warn "data/ has uncommitted changes"
   else
-    ok "working tree clean for data/plans.json"
+    ok "working tree clean for data/"
   fi
 else
   fail "not inside a git work tree"

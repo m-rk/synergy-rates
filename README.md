@@ -1,8 +1,10 @@
 # synergy-rates
 
 Structured, machine-readable pricing for [Synergy](https://www.synergy.net.au)'s
-residential electricity plans (Western Australia / SWIS), scraped weekly from
+residential electricity plans (Western Australia / SWIS), scraped daily from
 Synergy's own published plan pages and committed to this repo.
+
+**[Browse the current rates →](https://m-rk.github.io/synergy-rates/)**
 
 **Unofficial.** Not affiliated with or endorsed by Synergy. Synergy publishes no
 API for this data; this repo scrapes the plain HTML of their public plan pages
@@ -15,21 +17,36 @@ Synergy's plan pricing (supply charge + per-kWh rates, including time-of-use
 periods like Midday Saver's Peak/Off-Peak/Super-Off-Peak) is only published as
 formatted web pages. There's no feed to point a cost-estimate dashboard,
 Home Assistant automation, or spreadsheet at. This repo turns those pages into
-one JSON file, kept current by a scheduled GitHub Action, so anyone can query
-it without scraping the site themselves.
+JSON, kept current by a daily scrape, so anyone can query it without scraping
+the site themselves.
 
 ## Data
 
-**[`data/plans.json`](data/plans.json)** — the latest snapshot. Fetch it directly:
+Two ways to get it, same underlying data, both plain JSON with CORS enabled:
+
+**GitHub Pages** (nicer URL, correct `Content-Type: application/json`):
+
+```
+https://m-rk.github.io/synergy-rates/data/plans.json
+https://m-rk.github.io/synergy-rates/data/plans/midday-saver.json   # one plan by slug
+```
+
+**Raw file** (works even if Pages is ever down):
 
 ```
 https://raw.githubusercontent.com/m-rk/synergy-rates/main/data/plans.json
 ```
 
-Git history on that file **is the changelog** — every commit is either "no
-change" (skipped, nothing committed) or a real rate/plan change, with a commit
-message naming which plan(s) changed. `git log -p -- data/plans.json` shows
-the full history of rate changes over time.
+[`index.html`](index.html) (served at the Pages root) renders the current
+plans and lists per-plan URLs — open it in a browser rather than guessing
+slugs.
+
+Git history on [`data/plans.json`](data/plans.json) **is the changelog** —
+every commit is either "no change" (skipped, nothing committed) or a real
+rate/plan change, with a commit message naming which plan(s) changed.
+`git log -p -- data/plans.json` shows the full history of rate changes over
+time. The per-plan files under `data/plans/` are a convenience derived from
+the same data — mirror the same commits, no separate history of their own.
 
 ### Schema
 
@@ -171,8 +188,8 @@ configure on that end) if a day goes by with no ping in either direction.
   customer's actual contracted rate, concessions, or GST-exempt status.
 - Synergy can restructure their page markup at any time; the scraper will
   then either silently return fewer plans (each missing one lands in
-  `skipped`) or fail outright. Check `data/plans.json`'s `skipped` list and
-  the Action's run history if something looks stale.
+  `skipped`) or fail outright. Check `data/plans.json`'s `skipped` list, or
+  run `deploy/doctor.sh`, if something looks stale.
 - Not for billing-critical use — verify anything cost-sensitive against the
   `url` on the actual Synergy site.
 

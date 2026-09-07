@@ -11,13 +11,14 @@ plans, a free-text block naming each period and its hours (e.g.
 block at all; informational pages (e.g. Green-energy-options) have
 neither and are skipped.
 
-Usage: scripts/scrape.py [--out data/plans.json]
+Usage: scripts/scrape.py [--out data/plans.json] [--plans-dir data/plans]
 """
 from __future__ import annotations
 
 import argparse
 import html
 import json
+import os
 import re
 import sys
 import urllib.request
@@ -138,9 +139,17 @@ def scrape() -> dict:
     return {"source": INDEX_URL, "plans": plans, "skipped": skipped}
 
 
+def write_json(path: str, obj: dict) -> None:
+    with open(path, "w") as f:
+        json.dump(obj, f, indent=2)
+        f.write("\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default="data/plans.json")
+    parser.add_argument("--plans-dir", default="data/plans",
+                         help="also write one <slug>.json per plan here (stale files removed)")
     args = parser.parse_args()
 
     data = scrape()
@@ -148,10 +157,18 @@ def main() -> int:
         print("No plans scraped -- refusing to write an empty result.", file=sys.stderr)
         return 1
 
-    with open(args.out, "w") as f:
-        json.dump(data, f, indent=2)
-        f.write("\n")
-    print(f"Wrote {len(data['plans'])} plan(s), skipped {len(data['skipped'])}, to {args.out}")
+    write_json(args.out, data)
+
+    os.makedirs(args.plans_dir, exist_ok=True)
+    current = {p["slug"] for p in data["plans"]}
+    for name in os.listdir(args.plans_dir):
+        if name.endswith(".json") and name[:-len(".json")] not in current:
+            os.remove(os.path.join(args.plans_dir, name))
+    for plan in data["plans"]:
+        write_json(os.path.join(args.plans_dir, f"{plan['slug']}.json"), plan)
+
+    print(f"Wrote {len(data['plans'])} plan(s), skipped {len(data['skipped'])}, "
+          f"to {args.out} and {args.plans_dir}/<slug>.json")
     return 0
 
 

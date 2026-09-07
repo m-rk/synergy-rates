@@ -22,7 +22,7 @@ heartbeat() {
 main() {
   python3 scripts/scrape.py
 
-  if git diff --quiet -- data/plans.json; then
+  if git diff --quiet -- data/; then
     echo "$(date -u +%FT%TZ) no change"
     return 0
   fi
@@ -34,7 +34,7 @@ main() {
   local summary
   summary=$(python3 scripts/diff_summary.py "$old" data/plans.json)
 
-  git add data/plans.json
+  git add data/
   git commit -m "Update rates: $summary"
   git push
   echo "$(date -u +%FT%TZ) pushed: $summary"
