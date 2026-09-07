@@ -2,7 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   macOS launchd job: runs deploy/run.sh daily (9am local time).
-  Adjust the two absolute paths below for your machine, then:
+  Adjust the two absolute paths below for your machine. If you've set up
+  a dead man's switch (see README), also fill in EnvironmentVariables
+  below with your own heartbeat URL -- get a free one from
+  https://healthchecks.io (1-day period, a few hours of grace). Leave
+  that whole <dict> out entirely if you're skipping the heartbeat.
+  Then:
 
     cp deploy/com.m-rk.synergy-rates.plist.example \
        ~/Library/LaunchAgents/com.m-rk.synergy-rates.plist
@@ -33,6 +38,11 @@
     <integer>9</integer>
     <key>Minute</key>
     <integer>0</integer>
+  </dict>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>SYNERGY_RATES_HEARTBEAT_URL</key>
+    <string>https://hc-ping.com/your-check-uuid-here</string>
   </dict>
   <key>StandardOutPath</key>
   <string>/absolute/path/to/home/Library/Logs/synergy-rates.log</string>
