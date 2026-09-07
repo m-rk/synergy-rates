@@ -10,7 +10,12 @@
 # whatever's on the other end can tell you if the scheduled job stops
 # running or starts failing, independent of whether Synergy's rates
 # actually changed that day (a silent "no change" run must still count
-# as a heartbeat). Run deploy/doctor.sh to check this is wired up.
+# as a heartbeat).
+#
+# deploy/doctor.sh runs unconditionally at the end (even after a
+# failure above, so it can help explain why) and posts its own
+# findings to Discord if SYNERGY_RATES_DISCORD_WEBHOOK_URL is set --
+# see doctor.sh's own header. It never changes this script's exit code.
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
@@ -42,9 +47,13 @@ main() {
 
 if main; then
   heartbeat "${SYNERGY_RATES_HEARTBEAT_URL:-}"
+  main_status=0
 else
-  status=$?
-  echo "$(date -u +%FT%TZ) FAILED (exit $status)" >&2
+  main_status=$?
+  echo "$(date -u +%FT%TZ) FAILED (exit $main_status)" >&2
   [ -n "${SYNERGY_RATES_HEARTBEAT_URL:-}" ] && heartbeat "${SYNERGY_RATES_HEARTBEAT_URL}/fail"
-  exit "$status"
 fi
+
+deploy/doctor.sh || true
+
+exit "$main_status"

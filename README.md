@@ -165,6 +165,17 @@ clean, `deploy/run.sh` is executable, and whether a dead man's switch (below)
 is configured at all. Exits `0` (all good), `1` (warnings only), or `2` (at
 least one hard failure) — safe to wire into your own monitoring.
 
+`deploy/run.sh` runs it automatically at the end of every invocation
+(regardless of whether the scrape/push itself succeeded), so it doubles as a
+daily self-check without a separate schedule. If `SYNERGY_RATES_DISCORD_WEBHOOK_URL`
+is set, a non-clean result (warnings or failures — never a clean pass) gets
+posted there as a compact report naming exactly which checks failed, as a
+standard Discord incoming-webhook message (`{"content": "..."}`, capped under
+Discord's 2,000-char limit, `@` neutralized since the message can embed
+scraped page content). This is a detail channel, not the dead man's switch
+itself — if the job never runs at all, nothing posts here either; that's what
+the heartbeat below is for.
+
 ## Dead man's switch
 
 A **daily** job that only commits when a rate actually changes has a real

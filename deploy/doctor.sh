@@ -1,16 +1,25 @@
 #!/bin/bash
 # Health check for a self-hosted synergy-rates deployment. Run this any
 # time you want to know "is this actually working right now?" -- it
-# doesn't change anything.
+# doesn't change anything except, optionally, posting to Discord.
 #
 # Exit 0 = all good, 1 = warnings only, 2 = at least one hard failure.
+#
+# If SYNERGY_RATES_DISCORD_WEBHOOK_URL is set, any WARN/FAIL found gets
+# posted there as a compact, notable-only report (a clean run posts
+# nothing -- this isn't a "still fine" heartbeat, that's what
+# SYNERGY_RATES_HEARTBEAT_URL / deploy/run.sh is for). Same shape as
+# this project's other doctors: one Discord incoming-webhook message,
+# {"content": "..."}, "@" neutralized since message text can embed
+# scraped page content.
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 status=0
+issues=()
 ok()   { echo "OK    $1"; }
-warn() { echo "WARN  $1"; [ "$status" -lt 1 ] && status=1; }
-fail() { echo "FAIL  $1"; status=2; }
+warn() { echo "WARN  $1"; issues+=("WARN $1"); [ "$status" -lt 1 ] && status=1; }
+fail() { echo "FAIL  $1"; issues+=("FAIL $1"); status=2; }
 
 # --- 1. Python ---
 if command -v python3 >/dev/null 2>&1; then
@@ -89,4 +98,20 @@ case "$status" in
   1) echo "Passed with warnings." ;;
   2) echo "One or more checks failed." ;;
 esac
+
+if [ "$status" -ne 0 ] && [ -n "${SYNERGY_RATES_DISCORD_WEBHOOK_URL:-}" ]; then
+  emoji="🟡"; [ "$status" -eq 2 ] && emoji="🔴"
+  message="$emoji synergy-rates doctor"
+  for line in "${issues[@]}"; do
+    message="$message"$'\n'"• $line"
+  done
+  payload=$(python3 -c "
+import json, sys
+message = sys.argv[1].replace('@', '@​')  # neutralize accidental mentions
+print(json.dumps({'content': message[:1900]}))  # stay under Discord's 2000-char limit
+" "$message")
+  curl -fsS -m 10 -H "Content-Type: application/json" -d "$payload" \
+    "$SYNERGY_RATES_DISCORD_WEBHOOK_URL" -o /dev/null || true
+fi
+
 exit "$status"
