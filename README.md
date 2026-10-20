@@ -1,5 +1,7 @@
 # synergy-rates
 
+![daily scrape status](https://healthchecks.io/badge/9b231d62-c5a0-49c1-99fd-0af866/vukB460Z-2.svg)
+
 An unofficial JSON API for [Synergy](https://www.synergy.net.au)'s residential
 electricity plan pricing (Western Australia / SWIS) — Synergy publishes no API
 of their own, so this scrapes their public plan pages daily and serves the

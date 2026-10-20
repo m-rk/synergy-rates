@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  macOS launchd job: runs deploy/run.sh daily (9am local time).
+  macOS launchd job: runs deploy/run.sh twice daily (9am + a 1pm
+  catch-up in case the Mac slept through the morning run).
   Adjust the two absolute paths below for your machine. If you've set up
   a dead man's switch (see README), also fill in EnvironmentVariables
   below with your own heartbeat URL -- get a free one from
@@ -36,12 +37,20 @@
     <string>/absolute/path/to/synergy-rates/deploy/run.sh</string>
   </array>
   <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key>
-    <integer>9</integer>
-    <key>Minute</key>
-    <integer>0</integer>
-  </dict>
+  <array>
+    <dict>
+      <key>Hour</key>
+      <integer>9</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+    <dict>
+      <key>Hour</key>
+      <integer>13</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+  </array>
   <key>EnvironmentVariables</key>
   <dict>
     <key>SYNERGY_RATES_HEARTBEAT_URL</key>
